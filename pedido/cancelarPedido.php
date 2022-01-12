@@ -41,6 +41,10 @@
 
     try {
 
+        if ($conn !== false) {
+            $conn->beginTransaction();
+        }
+
         $status = false;
 
         // - obtém lista de pedidos ativos!
@@ -62,13 +66,32 @@
                     $result = $ps->execute( $data );
                     // -
                     if ($result === true) {
-                        $status = true;
+                        $query = "UPDATE produto a INNER JOIN itenspedido b ON (a.idProduto = b.idProduto) SET a.quantidade = a.quantidade + b.quantidade WHERE b.idPedido = ?";
+                        $data = [ $id ];
+                        // -
+                        $ps = $mysql->prepare( $query );
+                        $result = $ps->execute( $data );
+                        if ($result === true) {
+                            $status = true;
+                        }
                     }
                 }
             }
         }
+
+        if ($conn !== false) {
+            if ($status) {
+                $conn->commit();
+            }
+            else {
+                $conn->rollback();
+            }
+        }
     }
     catch (Exception $e) {
+        if ($conn !== false) {
+            $conn->rollback();
+        }
         $status = false;
         print("$query<br><pre>");
         print("</pre>Falha ao consultar dados em <font color='red'>funcionario</font>: '" . $e->getMessage() . "'<br>");

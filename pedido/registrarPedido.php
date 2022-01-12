@@ -89,7 +89,9 @@
                 $post['status'] = 0;
             }
         }
-        
+        // -
+        $post['id'] = $id_pedido;
+
         // ///////////////
         // ITENSPEDIDO
         // ///////////////
@@ -122,7 +124,7 @@
                         if ($result) {
                             $id_item_pedido = $mysql->getLastInsertID();
                             // =
-                            $post['items'][$i]['id'] = $id_item_pedido;
+                            $post['items'][$i]['id'] = $item['id'] = $id_item_pedido;
                         }
                         else {
                             $post['status'] = 0;
@@ -149,6 +151,21 @@
                         if ($result == false) {
                             $post['status'] = 0;
                         }
+                    }
+
+                    // - deduz quantidades dos produtos no estoque do cliente
+                    $query = "UPDATE produto SET quantidade = quantidade - ? WHERE idProduto = ?";
+                    $data = [
+                        $item['quantidade'],
+                        // -
+                        $item['produto']
+                    ];
+                    // -
+                    $ps = $mysql->prepare( $query );
+                    $result = $ps->execute( $data );
+                    // -
+                    if ($result == false) {
+                        $post['status'] = 0;
                     }
                 }
             }
