@@ -145,8 +145,9 @@
 				'segmento'	: segmento
 			},
 			'success'	: (response) => {
-                console.log("response => ", response);
+                //console.log("response => ", response);
                 removerMarcador(markers);
+                // -
                 markers = [];
                 if (response.ocorrencias > 0) {
                     Object.keys(empresas = response.empresas).forEach((k) => {
@@ -178,7 +179,7 @@
                         });
                         markers.push(marker);
                         // <-
-                        console.log("markers.push ", marker);
+                        //console.log("markers.push ", marker);
                     });
                     if (markers.length > 0) {
                         map.setCenter(markers[0].position);
@@ -300,7 +301,7 @@
                     });
                     let $mesas = $("#cardapio_mesa").off().on("change", function(){
                         let $el = $(this);
-                        $("#cardapio_mesa_descricao").val(mesas[$el.val()].descricao);
+                        $("#cardapio_mesa_descricao").val(mesas[$el.val()] ? mesas[$el.val()].descricao : "");
                         obterPedido(false);
                     });
                     $mesas.contents().remove();
@@ -315,17 +316,6 @@
                     // =
                     $container.append($accordion);
                     $container.find(".accordion-collapse").first().addClass("collapse show");
-                    /*
-                    $container.find(".list-group-item").on("click", function() {
-                        let $el = $(this);
-                        if ($el.hasClass("active")) {
-                            $el.removeClass("active");
-                        }
-                        else {
-                            $el.addClass("active");
-                        }
-                    });
-                    */
                     // -
                     modal.show();
                 }
@@ -346,11 +336,13 @@
                     dataType: "json",
                     success: (response) => {
                         
-                        console.log("response registrarPedido => ", response);
+                        //console.log("response registrarPedido => ", response);
 
                         if (response && response.status == 1) {
                             bootstrap.Modal.getInstance($("#cardapioModal").get(0)).hide();
-                    
+
+                            console.log("--- ", response);
+
                             // - exibe o toast (bootstrap) com aviso de pedido registrado com sucesso!
                             [].slice.call(document.querySelectorAll('.toast.estabelecimentos')).map((toastEl)  => {
                                 document.getElementById("toast-body").innerText = `Pedido ${response.id} registrado com sucesso!`;

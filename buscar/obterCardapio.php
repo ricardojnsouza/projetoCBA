@@ -138,7 +138,7 @@
                             FROM
                                 pedido
                             WHERE
-                                situacaoPedido NOT IN ('Solicitado', 'Em produção', 'Entregue')
+                                situacaoPedido IN ('Solicitado', 'Em produção', 'Entregue')
                         )
                     ORDER BY
                         b.codigo, b.lugares";
